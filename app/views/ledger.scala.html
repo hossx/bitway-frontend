@@ -1,0 +1,135 @@
+@(currency: String)(implicit session: Session)
+
+<!doctype html>
+<html ng-app="ledger">
+<head>
+    @_headResource("- 账单")
+</head>
+<span ng-init="currency='@currency'"></span>
+<body>
+@_navbar()(session)
+<div class="fixes-top bg" ng-controller="LedgerCtrl">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                @_account_navbar(3)(session)
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        <h4><strong>@currency 报表</strong></h4>
+                    </header>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">币种：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <select class="form-control" ng-model="currency" ng-change="changeCurrency()">
+                                        <option value="CNY">CNY-人民币</option>
+                                        <option value="BTC">BTC-比特币</option>
+                                        <option value="USD">USD-美元</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                            <label class="col-sm-3 control-label">可用金额：</label>
+                            <div class="col-sm-6">
+                            <div class="controls">
+                            <div class="text">
+                            <span class="text-info"><h4><span ng-bind="balance"></span> @currency</h4></span>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="form-group">
+                            <label class="col-sm-3 control-label">冻结金额：</label>
+                            <div class="col-sm-6">
+                            <div class="controls">
+                            <div class="text">
+                            <span class="text-info"><h4><span ng-bind="freezing"></span> @currency</h4></span>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">时间：</label>
+                                <div class="col-sm-6">
+                                    <div class="controls">
+                                        <div class="input-prepend input-group"> <span class="add-on input-group-addon"></span>
+                                            <!--<i class="icon-calendar"></i>-->
+                                            <!--<input type="text" name="reservation" id="reservationtime" class="form-control active" value="08/01/2013 1:00 PM - 08/01/2013 1:30 PM">-->
+                                            <input type="text" name="startDate" class="input-small datepicker" ng-model="startDate">
+                                            <label>至:</label>
+                                            <input type="text" name="startDate" class="input-small datepicker" ng-model="endDate">
+                                            <!--<label>至:</label> <input type="text" name="endDate" class="input-small datepicker" ng-model="endDate">-->
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-6">
+                                    <button class="btn w-xs btn-primary" ng-click="ledgerQuery()">查询账单</button>
+                                    <a class="btn w-xs btn-primary" href="/api/v1/downloadBillReport/{{currency}}?begin={{startDate}}&end={{endDate}}">下载账单</a>
+                                    <a class="btn w-xs btn-primary" href="/api/v1/downloadInvoices/{{currency}}?begin={{startDate}}&end={{endDate}}">下载收据</a>
+                                </div>
+                            </div>
+                            <div class="blk20"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table  class="table table-striped table-bordered responsive no-m" data-sortable>
+                                            <thead>
+                                            <tr>
+                                                <td align="center">时间</td>
+                                                <td align="center">订单摘要</td>
+                                                <td align="center">付款人</td>
+                                                <td align="right">应收BTC</td>
+                                                <td align="right">已付BTC</td>
+                                                <td align="right">汇率</td>
+                                                <td align="center">类别</td>
+                                                <td align="right">金额</td>
+                                                <td align="center">操作</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="item in bills"  class="">
+                                            <td ng-bind="item.date  | date:'yy-MM-dd HH:mm:ss'"></td>
+                                            <td ng-bind="item.itemDesc | abstract:6"></td>
+                                            <td ng-bind="item.buyer | abstract:6"></td>
+                                            <td align="right" ng-bind="item.btcPrice"></td>
+                                            <td align="right" ng-bind="item.btcPaid"></td>
+                                            <td align="right" ng-bind="item.rate | cash:2"></td>
+                                            <td><span class="label label-{{item.bType | billTypeClass}}" ng-bind="item.bType | billTypeText"></span></td>
+                                            <td align="right"><span class="{{item.flow | cashFlowColor}}" ng-bind="item.flow+' '+(item.amount | cash)"></span></td>
+                                            <td>
+                                                <a href="/invoiceDetail/{{item.invoiceId}}" class="btn-info btn-sm" >详细</a>
+                                                <a href="" class="btn-info btn-sm" ng-click="doRefund(item)" ng-hide="item.bType">退款</a>
+                                            </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <pagination boundary-links="true" max-size="15" item s-per-page="limit" total-items="count" ng-model="page" class="pagination-sm" ng-change="ledgerQuery()" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+@_footer(false)
+
+<!--end-main-container-->
+<script src="/javascripts/angular.min.js"></script>
+<script src="/javascripts/ui-bootstrap-tpls-0.11.0.min.js"></script>
+<script src="/javascripts/coinport/ledger.js"></script>
+<script src="/javascripts/coinport/filter.js"></script>
+@_tailResource()
+@_ga()
+</body>
+</html>

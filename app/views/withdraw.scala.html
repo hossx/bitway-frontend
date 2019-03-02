@@ -1,0 +1,119 @@
+@(currency: String)(implicit session: Session)
+
+<!doctype html>
+<html ng-app="withdraw">
+<head>
+    @_headResource("- 提现")
+</head>
+<span ng-init="currency='@currency'"></span>
+<body>
+@_navbar()(session)
+<div class="fixes-top bg" >
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="row" ng-controller="WithdrawalCtrl">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                @_account_navbar(4)(session)
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        <h4><strong>@currency 提现</strong></h4>
+                    </header>
+                    <div class="panel-body">
+                        <form name="withdrawForm" class="form-horizontal" ng-hide="userStatus == 'Active'">
+                            <h4>
+                                目前您的账户状态未激活，请与管理员联系，激活您的账户。
+                            </h4>
+                        </form>
+
+                        <form name="withdrawForm" class="form-horizontal" ng-show="userStatus == 'Active'">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">可用金额：</label>
+                                <div class="col-sm-6">
+                                    <div class="text">
+                                    <span class="text-info"><h4><span ng-bind="balance"></span> @currency</h4></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" required="">提现地址：</label>
+                                <div class="col-sm-6">
+                                    <div class="text" ng-bind="accountNumber"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" required="">提现数目：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <input type="text" class="form-control" ng-model="withdrawalData.amount" required="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" required="">邮件验证码：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <input type="text" class="form-control" ng-model="withdrawalData.emailcode" required="">
+                                </div>
+                                <div class="col-sm-4 col-xs-12">
+                                    <button class="btn w-xs btn-default" ng-click="sendVerifyEmail()" ng-disabled="isTimingEmail" ng-bind="verifyButtonEmail">获取邮件验证码</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" required=""></label>
+                                <div class="col-sm-6">
+                                    <p class="success" style="color: red" ng-hide="canWithdraw">{{withdrawErrorMessage}}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-4 col-xs-12">
+                                    <button class="btn btn-lg  btn-primary btn-block" ng-click="withdrawal()" ng-disabled="withdrawForm.$invalid || withdrawInvalid">提现</button>
+                                </div>
+                            </div>
+
+                        <div class="blk20"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table  class="table table-striped table-bordered responsive no-m" data-sortable>
+                                            <thead>
+                                            <tr>
+                                                <td>ID</td>
+                                                <td>时间</td>
+                                                <td>金额</td>
+                                                <td>状态</td>
+                                                <td>提现帐号</td>
+                                                <td>操作</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr  ng-repeat="item in withdrawals | orderBy: ['-date', '-id']" class="">
+                                                <td ng-bind="item.id"></td>
+                                                <td ng-bind="item.date | date:'yyyy-MM-dd HH:mm:ss'"></td>
+                                                <td ng-bind="item.amount"></span></td>
+                                                <td ng-bind="item.status | transferStatusText"></span> </td>
+                                                <td ng-bind="item.address"></td>
+                                                <td><button class="btn-default btn-sm btn" ng-click="cancelWithdrawal(item)" ng-show="item.status == 0">取消</button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <pagination boundary-links="true" max-size="5" items-per-page="limit" total-items="count" ng-model="page" class="pagination-sm" ng-change="loadWithdrawals()" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+@_footer(false)
+<!--end-main-container-->
+@_tailResource()
+<script src="/javascripts/angular.min.js"></script>
+<script src="/javascripts/ui-bootstrap-tpls-0.11.0.min.js"></script>
+<script src="/javascripts/coinport/withdraw.js"></script>
+<script src="/javascripts/coinport/filter.js"></script>
+@_ga()
+</body>
+</html>

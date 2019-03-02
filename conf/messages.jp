@@ -1,0 +1,15 @@
+paywithbitcoin=ビットコインでお支払いください
+invoice.button=ビットコインウォレットを開いてください
+invoice.status.success=支払成功
+invoice.status.success2=
+invoice.status.expired=期限が
+invoice.status.expired2=過ぎてきます
+invoice.title=お支払い
+invoice.return=商店に戻る
+invoice.result.label1=取引金額
+invoice.result.label2=BTC:
+invoice.result.label3=BTC:
+invoice.value=最初の発注金額は
+invoice.expiringIn=有効期間:
+invoice.receivedAt=支払いを受けた時刻:
+invoice.expiredAt=有効期間の切れたとき:

@@ -1,0 +1,39 @@
+@(titleKey: String, messageKey: String)(implicit lang: Lang, flash: Flash, session: Session)
+
+<!DOCTYPE html>
+<html lang="@(lang.code)">
+<head>
+    @_headResource()
+</head>
+
+<body ng-app="coinport.prompt">
+@_navbar()(session)
+
+<div class="fixes-top bg">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <section class="panel article">
+                    <header class="panel-heading">
+                        <h3><strong>@Messages(titleKey)</strong></h3>
+                    </header>
+                    <br/>
+                    <div class="panel-body">
+                        <p>
+                            <b>@Messages(messageKey)</b>
+                        </p>
+                        <br/>
+                        @flash.get("error").map { message =>
+                          <p>错误信息：@Messages(message) </p>
+                        <br/>
+                        }
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+@_ga()
+</body>
+</html>

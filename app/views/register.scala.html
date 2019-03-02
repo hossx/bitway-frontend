@@ -1,0 +1,76 @@
+@()(implicit lang: Lang, flash: Flash, session: Session)
+
+<!doctype html>
+<html ng-app="register">
+<head>
+    @_headResource()
+</head>
+
+<body>
+@_navbar()(session)
+
+<div class="fixes-top bg-white">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="box-sm">
+                <div class="list-group list-group-lg" ng-controller="RegisterCtrl">
+                    <form name="registerForm">
+                    <div class="list-group-item text-center">
+                        <h4><em class="icon box bg-popurle"><i class="icon-key"></i></em>注册币丰支付</h4>
+                        <p class="success" style="color: red" ng-show="errorMsg != ''">{{errorMsg}}</p>
+                    </div>
+                    <div class="list-group-item">
+                        <input type="email" name="email" placeholder="Email" class="form-control" ng-model="email">
+                    </div>
+
+                    <div class="list-group-item">
+                        <div class="form">
+                            <input name="password" type="password" class="form-control" placeholder="密码" ng-model="password" ng-minlength="6" ng-maxlength="30" required="">
+                        <br>
+                            <input name="confirmPassword" type="password" class="form-control" placeholder='重复密码' ng-model="confirmPassword" repeat-input="password" required="">
+                        </div>
+                        <br>
+                        <div class="error" name="emailErrorMsg" ng-show="registerForm.email.$dirty && registerForm.email.$invalid && !registerForm.email.$focused">
+                            <small class="text-danger text-center" ng-show="registerForm.email.$error.required"> Email 不能为空 </small>
+                            <small class="text-danger text-center" ng-show="!registerForm.email.$error.required && registerForm.email.$dirty && registerForm.email.$invalid"> Email 格式错误</small>
+                        </div>
+                        <div class="error" name="pwdErrorMsg" ng-show="registerForm.password.$dirty && registerForm.password.$invalid && !registerForm.password.$focused">
+                            <small class="text-danger text-center" ng-show="registerForm.password.$error.minlength">密码长度应大于8位</small>
+                            <small class="text-danger text-center" ng-show="registerForm.password.$error.maxlength">密码长度需小于32位</small>
+                        </div>
+                        <div class="error" name="confirmpwdErrorMsg" ng-show="registerForm.confirmPassword.$dirty && registerForm.confirmPassword.$invalid && !registerForm.confirmPassword.$focused">
+                            <small class="text-danger text-center" ng-show="registerForm.confirmPassword.$error.repeat">密码不一致</small>
+                        </div>
+                    </div>
+
+                    <div class="list-group-item">
+                            <input id="terms" name="terms" type="checkbox" ng-model="termsChecked">
+                            我已经阅读并同意如下的
+                        <a href="/termsOfUse.html" target="_blank" style="color: #2980b9">"使用条款"</a>、
+                        <a href="/privatePolicy.html" target="_blank" style="color: #2980b9">"隐私政策"</a>和
+                        <a href="/amlPolicy.html" target="_blank" style="color: #2980b9">"反洗钱政策"</a>
+                            </input>
+                    </div>
+
+                    <div class="list-group-item">
+                        <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="doregister()" ng-disabled="registerForm.$invalid || !termsChecked">注册</button>
+                    </div>
+                    <div class="line line-dashed"></div>
+                    <div class="list-group-item text-center"> <small><a class="btn-link" href="/login">已有币丰支付账户，请登录</a></small> </div>
+                    </form>
+
+                </div>
+        </div>
+    </div>
+</div>
+<script src="/javascripts/angular.min.js"></script>
+<script src="/javascripts/ui-bootstrap-tpls-0.11.0.min.js"></script>
+<script src="/javascripts/coinport/register.js"></script>
+
+@_footer(false)
+
+<!--end-main-container-->
+@_tailResource()
+@_ga()
+</body>
+</html>

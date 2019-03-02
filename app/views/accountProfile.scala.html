@@ -1,0 +1,284 @@
+@(profileMap: Map[String, List[Map[String, String]]])(implicit session: Session)
+@import controllers.PageUtil.Const._
+
+<!doctype html>
+<html ng-app="account">
+<head>
+    @_headResource("- 我的账号")
+</head>
+
+<body onload="bodyOnLoad(@{profileMap.get(KeyMerchantBankCards).map(_.size).getOrElse(0)})">
+@_navbar()(session)
+<div class="fixes-top bg">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+              @_account_navbar(2)(session)
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                <section class="panel" ng-controller="AccountProfilesCtrl">
+                    <header class="panel-heading">
+                        <h4><strong>用户设置</strong></h4>
+                    </header>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" action="/accountprofile/update" method="POST">
+                          @for(contactMap <- profileMap.get(KeyMerchantContact).get) {
+                            <div class="form-group">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-6">
+                                    <div class="text text-primary">
+                                        <h4>用户信息</h4>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="blk10"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">公司名称：</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="name"
+                                           value="@{contactMap.get(MerchantContactName).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPassword3" class="col-sm-3 control-label">公司地址：</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control"  name="address" id="address"
+                                           value="@{contactMap.get(MerchantContactAddr).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">公司Email：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="email"
+                                           value="@{contactMap.get(MerchantContactEmail).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">联系电话：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="phone"
+                                           value="@{contactMap.get(MerchantContactPhone).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">BTC提现地址：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="btcAddr"
+                                           value="@{contactMap.get(MerchantBtcAddress).getOrElse("")}">
+                                </div>
+                            </div>
+                            }
+                            <div class="blk20"></div>
+                            <div class="form-group">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-6">
+                                    <div class="text text-primary">
+                                        <h4>银行账户信息</h4>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="blk10"></div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="bankCardsCount" value="1" />
+                            @for((bc, i) <- profileMap.get(KeyMerchantBankCards).getOrElse(List.empty[Map[String, String]]) zipWithIndex) {
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">开户地区：</label>
+                                <div class="col-sm-6">
+                                    <select name="account" class="form-control" name=@{"bankCountry" + i} id=@{"bankCountry" + i} onchange="onCountryChange(@i)">
+                                      <option @if(bc.get(MerchantBankCardCountry) == Some("0")){selected=""} value="0">中国境内</option>
+                                      <option @if(bc.get(MerchantBankCardCountry) == Some("1")){selected=""} value="1">其它地区</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPassword3" class="col-sm-3 control-label">银行名称：</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name=@{"bankName" + i} id=@{"bankName" + i}
+                                           value="@{bc.get(MerchantBankCardBankName).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group" id=@{"branch" + i}>
+                                <label class="col-sm-3 control-label">支行名称：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name=@{"branch" + i} value="@{bc.get(MerchantBankCardBranch).getOrElse("")}">
+                                </div>
+                            </div>
+
+                            <div class="form-group" id=@{"bankSwift" + i}>
+                                <label class="col-sm-3 control-label">银行SWIFT/BIC编码：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="@{"bankSwift" + i}" value="@{bc.get(MerchantBankCardBankSwift).getOrElse("")}">
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="@{"bankCity" + i}">
+                                <label for="inputEmail3" class="col-sm-3 control-label">银行所在城市：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="@{"bankCity" + i}" value="@{bc.get(MerchantBankCardCity).getOrElse("")}">
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="@{"bankAddr" + i}">
+                                <label for="inputEmail3" class="col-sm-3 control-label">地址：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="@{"bankAddr" + i}" value="@{bc.get(MerchantBankCardAddress).getOrElse("")}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">账号：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="@{"cardId" + i}" id="@{"cardId" + i}" value="@{bc.get(MerchantBankCardId).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">收款人名称：</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    <input type="text" class="form-control" name="@{"ownerName" + i}" id="@{"ownerName" + i}" value="@{bc.get(MerchantBankCardOwner).getOrElse("")}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">支付币种：</label>
+                                <div class="col-sm-6">
+                                    <select name="@{"bankCurrency" + i}" class="form-control">
+                                      <option @if(bc.get(MerchantBankCardCurrency) == Some("1")){selected=""} value="1">人民币</option>
+                                      <option @if(bc.get(MerchantBankCardCurrency) == Some("2")){selected=""} value="2">美元</option>
+                                    </select>
+                                </div>
+                            </div>
+                            }
+                            <div class="form-group">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-9">
+                                    <input class="btn btn-lg  btn-primary" type="submit" value="保存修改">
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="blk20"></div>
+                            <div class="divider"></div>
+                            <div class="blk20"></div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="text">
+                                        <h4>API token</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            @defining(profileMap.get(KeyMerchantApiTokens).getOrElse(List.empty[Map[String, String]])) { tokenList =>
+                            <div class="form-group">
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+
+                                        <table  class="table table-striped table-bordered responsive no-m" data-sortable>
+                                            <!--<thead>-->
+                                            <!--<tr>-->
+                                                <!--<td>API tokon</td>-->
+                                                <!--<td>操作</td>-->
+                                            <!--</tr>-->
+                                            <!--</thead>-->
+                                            <tbody>
+                                              @for((token, i) <- tokenList zipWithIndex) {
+                                              <form action="/accountprofile/removeapitoken" id="removeTokenForm@i" method="POST">
+                                            <tr>
+                                                <td>
+                                                    <input readonly="true" type="text" name="apiToken"
+                                                           value="@{token.get(MerchantApiToken).getOrElse("")}" size="40" style="border: none; background-color: transparent"/>
+                                                    <input type="button" class="btn-link" value="刪除" onclick="confirmDialog('@i')" />
+                                                </td>
+                                            </tr>
+                                              </form>
+                                            }
+                                            @if(tokenList.size < 5) {
+                                            <tr>
+                                                <td colspan="2">
+                                                    <form action="/accountprofile/createapitoken" method="POST">
+                                                        <input type="submit" class="btn btn-sm btn-primary" value="新增令牌" />
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            }
+
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="text">
+                                        <h4>Secret Key</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12 col-xs-12">
+                                    <table  class="table table-striped table-bordered responsive no-m">
+                                        <tr>
+                                            <td>
+                                                <form action="/accountprofile/updatesecret" method="POST">
+                                                    <input readonly="true" type="text" name="apiToken" value="@profileMap.get(KeyMerchantSecret).get(0).get(MerchantSecret)" size="40" style="border: none; background-color: transparent">
+                                                    <input type="submit" class="btn-link" value="更换" />
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+@_footer(false)
+
+<!--end-main-container-->
+@_tailResource()
+
+<script type="text/javascript">
+ function bodyOnLoad(n) {
+   for (var i=0; i<n; i++) {
+     onCountryChange(i);
+   }
+ }
+
+ function onCountryChange(i) {
+   console.debug("onCountryChange: ", i);
+   console.debug("bankCountry" + i);
+   var selVal = document.getElementById("bankCountry" + i).value;
+   console.debug("selected value: ", selVal);
+   if ("0" == selVal) {
+     document.getElementById("branch" + i).style.display = "block";
+     document.getElementById("bankSwift" + i).style.display = "none";
+     document.getElementById("bankCity" + i).style.display = "none";
+     document.getElementById("bankAddr" + i).style.display = "none";
+     document.getElementById("bankPostal" + i).style.display = "none";
+   } else {
+     document.getElementById("branch" + i).style.display = "none";
+     document.getElementById("bankSwift" + i).style.display = "block";
+     document.getElementById("bankCity" + i).style.display = "block";
+     document.getElementById("bankAddr" + i).style.display = "block";
+     document.getElementById("bankPostal" + i).style.display = "block";
+   }
+
+ }
+
+ function confirmDialog(ind)
+ {
+    var formId = "removeTokenForm" + ind;
+    if (confirm("你确定要删除这个API 令牌吗？")){
+        document.forms[formId].submit();
+    }
+ }
+</script>
+@_ga()
+</body>
+</html>

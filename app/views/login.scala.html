@@ -1,0 +1,51 @@
+@()(implicit lang: Lang, flash: Flash, session: Session)
+<!doctype html>
+<html>
+<head>
+    @_headResource()
+</head>
+
+<body>
+@_navbar()(session)
+
+<div class="fixes-top bg-white">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="box-sm">
+            <form name="form" action="/api/v1/login" method="POST">
+                <div class="list-group list-group-lg">
+                    <div class="list-group-item text-center">
+                        <h4><em class="icon box bg-popurle"><i class="icon-user"></i></em>登录币丰支付</h4>
+                        @flash.get("error").map { message =>
+                        <p class="error" style="color: red"> @Messages(message) </p>
+                        }
+
+                        @flash.get("msg").map { msgKey =>
+                        <p class="success" style="color: green"> @Messages(msgKey) </p>
+                        }
+
+                    </div>
+                    <div class="list-group-item">
+                        <input type="email" name="email" placeholder="Email" class="form-control">
+                    </div>
+                    <div class="list-group-item">
+                        <input type="password" name="password" placeholder="密码" class="form-control">
+                    </div>
+                    <div class="list-group-item">
+                        <button type="submit" class="btn btn-lg btn-primary btn-block" >登录</button>
+                    </div>
+                    <div class="line line-dashed"></div>
+                    <div class="list-group-item text-center"> <small><a class="btn-link" href="/requestpwdresetpage">忘记密码?</a></small><small class="col-xs-offset-1"><a class="btn-link" href="/signup">还没有币丰支付账户? 马上注册</a></small> </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@_footer(false)
+
+<!--end-main-container-->
+@_tailResource()
+@_ga()
+</body>
+</html>

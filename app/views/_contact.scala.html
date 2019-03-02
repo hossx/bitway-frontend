@@ -1,0 +1,27 @@
+@(contact: com.coinport.bitway.data.Contact)
+
+
+<div class="name">@contact.name</div>
+<div class="address">
+    <p>
+        @if(contact.address.isDefined){
+        	@contact.address<br>
+        }
+        @if(contact.address2.isDefined) {
+        	@contact.address2<br>
+        }
+
+        @if(contact.city.isDefined) {@contact.city}
+        @if(contact.state.isDefined) {, @contact.state}
+        @if(contact.zip.isDefined) {, @contact.zip}
+        @if(contact.country.isDefined){<br>@contact.country}
+    </p>
+</div>
+@if(contact.phone.isDefined || contact.email.isDefined) {
+<div class="contact">
+    <p>
+        @if(contact.phone.isDefined){<i class="icon-phone"></i> @contact.phone<br>}
+        @if(contact.email.isDefined){<i class="icon-mail-alt"></i><a href="mailto:@contact.email">@contact.email</a>}
+    </p>
+</div>
+}

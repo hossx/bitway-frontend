@@ -1,0 +1,25 @@
+logo=COINPORT
+paywithbitcoin=Pay with Bitcoin
+invoice.button=Open Bitcoin Wallet
+invoice.status.success=PAID
+invoice.status.success2=
+invoice.status.expired=EXPIRED
+invoice.status.expired2=
+invoice.title=PLEASE PAY
+invoice.return=Return to Merchant
+invoice.result.label1=THIS INVOICE OF
+invoice.result.label2=BTC HAS
+invoice.result.label3=BTC WAS
+invoice.value=Invoice value
+invoice.expiringIn=Expiring in
+invoice.receivedAt=Payment received at
+invoice.expiredAt=Expired since
+
+invoice.merchant=Merchant
+invoice.buyer=Buyer
+invoice.orderId=Order ID
+invoice.item=Item
+
+prompt.backToHome=Back To Home
+
+register.termsCheckboxTextHead = Terms Of Use

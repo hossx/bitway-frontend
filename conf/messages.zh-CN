@@ -1,0 +1,44 @@
+logo=币丰支付
+paywithbitcoin=比特币支付
+invoice.button=打开比特币钱包
+invoice.status.success=支付成功
+invoice.status.expired=已过期
+invoice.title=请支付
+invoice.return=返回商家页面
+invoice.result.label1=该笔金额为
+invoice.result.label2=BTC 的订单
+invoice.result.label3=BTC 的订单
+invoice.value=订单金额
+invoice.expiringIn=过期时间：
+invoice.receivedAt=收到付款时间：
+invoice.expiredAt=过期时间：
+
+invoice.merchant=商户
+invoice.buyer=买家
+invoice.orderId=订单编号
+invoice.item=订单描述
+
+E200=信息缺失
+E201=邮件格式错误
+E202=密码格式错误(8~32位)
+E203=两次输入不一致
+
+ERROR2=无效的链接
+ERROR100=此邮箱已注册
+ERROR101=尚未完成注册邮件的认证
+ERROR102=用户名或密码不正确
+ERROR103=用户名或密码不正确
+
+register.succeeded=验证邮件已发送到您的注册邮箱，请登录邮箱点击链接完成注册
+passwordreset.succeeded=恭喜您，您的密码已经被成功重置。
+passwordreset.failed=密码重置失败
+register.verify.ok=注册验证成功，请登录
+register.verify.failed=注册验证失败！
+pwdreset.request.succeeded=如果您的邮箱已经注册，密码重置邮件会很快发送给您。请点击邮件中的链接进行密码重置。
+pwdreset.request.failed=请求密码重置失败！
+register=账户注册
+resetpwd=密码重置
+
+prompt.backToHome=返回首页
+
+register.termsCheckboxTextHead = 服务条款

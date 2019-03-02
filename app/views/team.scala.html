@@ -1,0 +1,57 @@
+@()(implicit session: Session)
+
+<!doctype html>
+<html>
+<head>
+    @_headResource("- 团队")
+</head>
+
+<body>
+@_navbar()(session)
+<div class="blk20"></div>
+<div class="fixes-top">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="team"><img src="/stylesheets/images/daniel-w.png">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="name">王东</div>
+                        <div class="occupation">联合创始人，CEO</div>
+                        <p>毕业于中国科技大学，曾就职于Google，前京东高级总监。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="team"><img src="/stylesheets/images/hoss-m.png">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="name">马超</div>
+                        <div class="occupation">联合创始人，CTO</div>
+                        <p>毕业于上海交通大学，曾就职于Google，前真旅网技术总监。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="team"><img src="/stylesheets/images/chunming.jpg">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="name">刘春明</div>
+                        <div class="occupation">联合创始人，COO</div>
+                        <p>毕业于中国科技大学，前京东首席架构师，负责京东推荐引擎技术。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="blk20"></div>
+    <div class="divider"></div>
+</div>
+
+@_footer()
+
+<!--end-main-container-->
+@_tailResource()
+@_ga()
+</body>
+</html>

@@ -1,0 +1,62 @@
+@import com.coinport.bitway.data._
+
+@(invoice: Invoice, dateFormatter: Long => String, priceFormatter: Double=>String,  iframe: Boolean, apiVersion: String, httpPrefix: String, wsPrefix: String, paymentUri: String, theme: String, customLogoUrl: Option[String] = None, customTitle: Option[String] = None)(implicit lang: Lang)
+<!doctype html>
+<html><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>@Messages("paywithbitcoin")</title>
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Pay with Bitcoin">
+
+    <link rel="apple-touch-icon-precomposed" href="/images/touch/apple-touch-icon-precomposed.png">
+    <link rel="icon" sizes="192x192" href="/images/touch/chrome-touch-icon-192x192.png">
+
+    <link rel="stylesheet" href="/invoice/css/invoice-@{theme}.css">
+    <meta name="msapplication-TileImage" content="/images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <script>
+        function goBack() {window.history.back();}
+    </script>
+</head>
+<body>
+@_invoice(invoice, dateFormatter, priceFormatter, iframe, paymentUri, customLogoUrl, customTitle)(lang)
+
+<script type="text/javascript">
+
+
+    var invoiceId = "@invoice.id";
+    var httpPrefix = "@httpPrefix";
+    var apiVersion = "@apiVersion";
+    var invoiceExpirationTime = @invoice.expirationTime;
+    var invoiceStatus = "@invoice.status.toString.toUpperCase()";
+    var invoiceTTL = @(invoice.expirationTime - invoice.currentTime.getOrElse(System.currentTimeMillis));
+    var invoiceLife = @(invoice.expirationTime - invoice.invoiceTime);
+    var btcShouldPay = @{priceFormatter(invoice.btcPrice - invoice.btcPaid.getOrElse(0.0))};
+    var expiredTime = @invoice.expirationTime;
+    var paidTime = @invoice.updateTime;
+    var paymentUri = "@paymentUri";
+    @if(invoice.status == InvoiceStatus.New) {
+        /*var websocketURL = "@{wsPrefix}/api/@{apiVersion}/invoicews/@{invoice.id}";*/
+        @if(invoice.data.redirectURL.isDefined && !iframe) {
+            var redirectURL = "@{invoice.data.redirectURL.get}";
+        }
+    }
+
+    function paymentAddress(btcShouldPay, isSimple, withLabel) {
+        var uri = "bitcoin:@{invoice.paymentAddress}?amount=" + btcShouldPay;
+        if (withLabel) {uri = uri + "&label=Coinport%20Invoice:%20" + invoiceId; }
+        if (!isSimple) {uri = uri + "&r=" + paymentUri; }
+        return uri;
+    }
+</script>
+<script src='@routes.Assets.at("/public/javascripts", "jquery-1.9.0.min.js")' type="text/javascript"></script>
+<script src='@routes.Assets.at("/public/javascripts", "jquery.qrcode-min.js")' type="text/javascript"></script>
+<script src='@routes.Assets.at("/public/javascripts", "qrcode-min.js")' type="text/javascript"></script>
+<script src='@routes.Assets.at("/public/javascripts", "invoice.js")' type="text/javascript"></script>
+</body></html>

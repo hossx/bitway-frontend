@@ -1,0 +1,96 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                               controllers.Application.index
+GET     /accessFlow                                     controllers.Application.accessFlow()
+GET     /amlPolicy                                      controllers.Application.amlPolicy()
+GET     /privatePolicy                                  controllers.Application.privatePolicy()
+GET     /termsOfUse                                     controllers.Application.termsOfUse()
+GET     /team                                           controllers.Application.team()
+GET     /jobs                                           controllers.Application.jobs()
+GET     /signup                                         controllers.Application.signupPage(lang ?= "zh-CN")
+GET     /login                                          controllers.Application.loginPage(lang ?= "zh-CN")
+GET     /verification/:token                            controllers.Application.validateRegister(token)
+GET     /requestpwdresetpage                            controllers.Application.requestPasswordResetPage
+GET     /requestpasswordreset                           controllers.Application.requestPasswordReset
+GET     /passwordreset                                  controllers.Application.passwordResetPage(token ?= "")
+GET     /passwordreset/*token                           controllers.Application.passwordResetPage(token)
+POST    /dopwdreset                                     controllers.Application.doPasswordReset()
+GET     /changepwd                                      controllers.Application.changePassword()
+GET     /prompt                                         controllers.Application.prompt(titleKey: String ?= "", msgKey: String ?= "")
+GET     /api                                            controllers.Application.api
+GET     /develop                                        controllers.Application.develop
+GET     /faq                                            controllers.Application.faq
+GET     /account                                        controllers.Application.account
+GET     /ledger/*currency                               controllers.Application.ledger(currency)
+GET     /withdraw/*currency                             controllers.Application.withdraw(currency)
+GET     /refund                                         controllers.Application.refundPage(invoiceId: String ?= "", currency: String ?= "")
+GET     /invoiceDetail/*invoiceId                       controllers.Application.invoiceDetail(invoiceId)
+#GET    /accountprofile                                 controllers.Application.profile
+#GET    /accountprofile/get/*id                         controllers.Application.profilePage(id)
+GET     /accountprofile/:id                             controllers.Application.profilePage(id: Long)
+POST    /accountprofile/createapitoken                  controllers.Application.createApiToken
+POST    /accountprofile/removeapitoken                  controllers.Application.removeApiToken
+POST    /accountprofile/updatesecret                    controllers.Application.updateSecret
+POST    /accountprofile/update                          controllers.Application.updateProfile
+GET     /sendverificationemail                          controllers.Application.sendVerificationEmail
+GET     /getaccountnumbers/*currency                    controllers.Application.getAccountNumbers(currency)
+GET     /isuseractive                                   controllers.Application.isUserActive
+        
+GET     /api/v1/rates/*currency                         controllers.Application.rates(currency)
+GET     /api/v1/asset/btc                               controllers.Application.queryBTCAsset
+GET     /api/v1/invoice/$id<[\w]{10,25}>                controllers.GetInvoiceAction.invoiceView(id: String, view: String ?= "")
+GET     /api/v1/invoiceData/$id<[\w]{10,25}>            controllers.GetInvoiceAction.invoiceData(id: String)
+GET     /api/v1/invoicews/$id<[\w]{10,25}>              controllers.Application.invoicews(id: String)
+GET     /api/v1/debugInvoice/*id                        controllers.GetInvoiceAction.debugInvoice(id: String)
+POST    /api/v1/invoice                                 controllers.CreateInvoiceAction.createInvoice
+POST    /api/v1/invoices                                controllers.GetInvoiceAction.invoiceQuery
+POST    /api/v1/invoiceByOrder                          controllers.GetInvoiceAction.invoiceQueryByOrder
+GET     /api/v1/i/$id<[\w]{10,25}>                      controllers.Application.paymentRequest(id: String)
+POST    /api/v1/p/$id<[\w]{10,25}>                      controllers.Application.payment(id: String)
+POST    /api/v1/register                                controllers.Application.register
+POST    /api/v1/login                                   controllers.Application.login
+GET     /api/v1/logout                                  controllers.Application.logout
+POST    /api/v1/logistics                               controllers.CreateInvoiceAction.updateLogistics
+
+# Account page
+GET     /api/v1/balance/                                controllers.Application.getBalance
+GET     /api/v1/getinvoices/*currency                   controllers.GetInvoiceAction.invoiceQuery2(currency)
+GET     /api/v1/getbills/*currency                      controllers.GetInvoiceAction.billQuery(currency)
+GET     /api/v1/querywithdrawal/*currency               controllers.Application.queryWithdrawal(currency)
+POST    /api/v1/withdraw/                               controllers.Application.currencyWithdraw
+POST    /api/v1/cancelWithdrawal/                       controllers.Application.cancelWithdrawal
+GET     /api/v1/downloadBillReport/*currency            controllers.GetInvoiceAction.downloadBillReport(currency)
+GET     /api/v1/downloadInvoices/*currency              controllers.GetInvoiceAction.downloadInvoices(currency)
+
+POST    /api/v1/refund/                                 controllers.Application.refund
+POST    /api/v1/confirmrefund                           controllers.Application.confirmRefund
+GET     /api/v1/refundId/*refundId                      controllers.Application.refundById(refundId)
+GET     /api/v1/queryrefund                             controllers.Application.queryRefund
+
+GET     /redirect/*invoiceId                            controllers.Application.redirect(invoiceId)
+GET     /debug                                          controllers.Application.debug
+POST    /debug                                          controllers.Application.debug
+
+# Demo Store
+GET     /store/pay                                      controllers.DemoStore.pay
+GET     /store/pay1                                     controllers.DemoStore.payWithDetails
+
+GET     /test                                           controllers.Application.test
+
+# Map static resources from the /public folder to the /assets URL path
+# Default path to /public
+GET     /images/*file             controllers.Assets.at(path="/public/images", file)
+GET     /docs/*file               controllers.Assets.at(path="/public/docs", file)
+GET     /fonts/*file              controllers.Assets.at(path="/public/fonts", file)
+GET     /views/*file              controllers.Assets.at(path="/public/views", file)
+GET     /store/*file              controllers.Assets.at(path="/public/store", file)
+GET     /javascripts/*file        controllers.Assets.at(path="/public/javascripts", file)
+GET     /stylesheets/*file        controllers.Assets.at(path="/public/stylesheets", file)
+GET     /invoice/*file            controllers.Assets.at(path="/public/invoice", file)
+
+#GET     /assets/*file                                   controllers.Assets.at(path="/public", file)
+#GET     /*file                                          controllers.Assets.at(path="/public", file)
+

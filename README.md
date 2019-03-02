@@ -1,0 +1,4 @@
+
+### API for generating an invoice
+
+```curl http://192.168.0.113:9000/invoice -d price=30000 -d currency=cny -d buyer.name="Wang Dong88" -d notificationURL=https://fdaf -d posData="{"a":"b", "C": [12,12}" -d buyer.address="617 Arcadia Terrace # 201" -d buyer.address2="Roome in the left corner" -d buyer.city="Mountain View" -d buyer.state=California -d buyer.zip=71871112111 -d buyer.country=USA -d buyer.phone="+91 18181818181" -d buyer.email="d@coinport.com" -d orderId="#188219929199191" -d itemDesc="apple developper book" -d itemCode="jafkdaf132132" -d fullNotifications=true -d notificationEmail="d@coinport.com"```

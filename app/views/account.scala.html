@@ -1,0 +1,81 @@
+@()(implicit session: Session)
+
+<!doctype html>
+<html ng-app="account">
+<head>
+    @_headResource("- 我的账号")
+</head>
+
+<body>
+@_navbar()(session)
+<div class="fixes-top bg">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3  col-sm-12 col-xs-12">
+                @_account_navbar(1)(session)
+            </div>
+            <div class="col-lg-9 col-md-9  col-sm-12 col-xs-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        <h4><strong>账户信息</strong></h4>
+                    </header>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" ng-controller="AccountCtrl">
+                            <div class="form-group">
+                                <label class="col-lg-3  col-sm-3 control-label">账户ID：</label>
+                                <div class="col-sm-6">
+                                    <div class="text"> @session.get("id").get </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3  col-sm-3 control-label">注册邮箱：</label>
+                                <div class="col-sm-6">
+                                    <div class="text"> @session.get("email").get </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-3  col-sm-3 control-label">账户余额：</label>
+                                <div class="col-sm-9">
+                                    <div class="table-responsive">
+                                        <table  class="table table-striped table-bordered responsive no-m" data-sortable>
+                                            <thead>
+                                            <tr>
+                                                <td>币种</td>
+                                                <td>可用金额</td>
+                                                <td>冻结金额</td>
+                                                <td>操作</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="item in balanceMap">
+                                            <td ng-bind="item.currency"></td>
+                                            <td ng-bind="item.balance"></td>
+                                            <td ng-bind="item.freezing"></td>
+                                            <td><a href="/ledger/{{item.currency}}" class="btn-default btn-sm btn">交易记录</a>
+                                            <a href="/withdraw/{{item.currency}}" class="btn-default btn-sm btn">提现</a></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+@_footer(false)
+
+<!--end-main-container-->
+
+<script src="javascripts/angular.min.js"></script>
+<script src="javascripts/coinport/account.js"></script>
+<script src="/javascripts/coinport/filter.js"></script>
+@_tailResource()
+@_ga()
+</body>
+</html>

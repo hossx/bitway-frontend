@@ -1,0 +1,581 @@
+@()(implicit session: Session)
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    @_headResource("- 支付接口")
+</head>
+
+<body>
+@_navbar(2)(session)
+
+<div class="fixes-top bg">
+<div class="blk20"></div>
+<div class="container">
+<div class="row">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+ <section class="panel article">
+               
+<header class="panel-heading">
+<h3><a href="/develop" style="color: #aaaaaa; margin-right: 30px;">开发者支持</a> <strong>应用接口</strong></h3>
+</header>
+<div class="anchor clearfix"><ul>
+
+    <li><a href="#create-invoice">生成付款收据</a></li>
+    <li><a href="#display-invoice">向用户展示收据</a></li>
+    <li><a href="#get-rates">读取比特币汇率</a></li>
+    <li><a href="#invoice-status">收据状态</a></li>
+    <li><a href="#invoice-query">收据查询</a></li>
+    <li><a href="#notification">商户接收收据状态变更</a></li>
+    <li><a href="#security">关于安全</a></li>
+    <li><a href="#refund">商家退款</a></li>
+</ul></div>
+<div class="divider"></div>
+<div class="blk20"></div>
+<div class="panel-body">
+<a name="#create-invoice" id="create-invoice"></a>
+<h4><strong>生成付款收据</strong></h4>
+
+<p>对每个用户的每次付款，您的服务器都需要通过币丰支付的API生成一个新的付款收据（invoice）。</p>
+<p>例子：收取客户800人民币的等值比特币。</p>
+            <pre>
+<code>
+    curl https://pay.coinport.com/api/v1/invoice \
+    -u {{your-api-token}} \
+    -d price=800 \
+    -d currency=cny
+</code>
+</pre>
+<P>除了上述必填的参数外，您还可以提供很多可选参数的值。</P>
+<h5>参数列表</h5>
+<div class="table-responsive">
+<table  class="table table-striped table-bordered responsive no-m" data-sortable>
+<col span="1" >
+<col span="1" >
+<col span="1" >
+<col span="1" style="width:50%;"  >
+<thead>
+<tr>
+    <td>参数</td>
+    <td>属性</td>
+    <td>类型</td>
+    <td>说明</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>price</td>
+    <td>必填</td>
+    <td>数字</td>
+    <td>该订单总价格。价格以结算货币作为单位，与展示给用户的当地货币可能不同。</td>
+</tr>
+<tr>
+    <td>currency</td>
+    <td>必填</td>
+    <td>字符串</td>
+    <td>结算货币代码。目前我们支持BTC（比特币），CNY（人民币）和USD（美金）。货币代码不区分大小写。</td>
+</tr>
+<tr>
+    <td>priceUnit</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>当币种为BTC时，priceUnit默认为BTC，单位还有mbtc（1 BTC = 1000 mbtc）、 bits（1 BTC = 1000,000 bits）和 satoshi (1 BTC = 100,000,000 satoshi)</td>
+</tr>
+<tr>
+    <td>posData</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>为商户保留的定制信息。建议您用JSON格式，最长为200个字节。</td>
+</tr>
+<tr>
+    <td>notificationURL</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户接收收据状态变更的URL。当收据状态变化时，我们会向这个URL发送POST请求。数据为JSON格式编码。该URL必须以HTTPS开头。商户需要确认收据状态变更通知是从币丰支付的服务器发出，确认之后再发货或提供服务。如带参数需经过URL Encoding。</td>
+</tr>
+<tr>
+    <td>transactionSpeed</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>比特币网络确认速度。可选值为high、medium、low, high为默认值，确认速度最快，约为几秒钟，medium约为10分钟, low确认速度最慢，约为半小时。</td>
+</tr>
+<tr>
+    <td>fullNotifications</td>
+    <td>可选</td>
+    <td>布尔值</td>
+    <td>指定商户是否要接收全部订单状态变更通知。默认为false，既只接收状态变为Confirm的通知消息。</td>
+</tr>
+<tr>
+    <td>notificationEmail</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户用来接收收据状态变更通知的电子邮件地址。</td>
+</tr>
+<tr>
+    <td>redirectURL</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户完成付款或invoice过期后，用户点击“返回商家”时，重定向目标URL。如带参数需经过URL Encoding。默认重定向方式为GET，如需POST invoice数据，请将redirectMethod参数设置为POST。</td>
+</tr>
+<tr>
+    <td>redirectMethod</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户完成付款或invoice过期后，用户点击“返回商家”时的请求方式，默认为GET。如设置为POST，系统会将invoice数据POST到redirectURL。数据为JSON格式编码。</td>
+</tr>
+<tr>
+    <td>physicial</td>
+    <td>可选</td>
+    <td>布尔值</td>
+    <td>是否为实物商品，默认为false。</td>
+</tr>
+<tr>
+    <td>orderId</td>
+    <td>必填</td>
+    <td>字符串</td>
+    <td>该invoice对应的订单号。</td>
+</tr>
+<tr>
+    <td>itemDesc</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>该订单中的商品描述。</td>
+</tr>
+<tr>
+    <td>itemCode</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>该订单中的商品编号。</td>
+</tr>
+<tr>
+    <td>displayPrice</td>
+    <td>可选</td>
+    <td>数字</td>
+    <td>订单的展示价格，如果不赋值，该字段默认与price字段值一致。</td>
+</tr>
+<tr>
+    <td>displayCurrency</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>订单展示价格的货币代码，如果不赋值，该字段默认与currency字段值一致。</td>
+</tr>
+<tr>
+    <td>customLogoUrl</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>定制invoice页面的Logo的图片连接</td>
+</tr>
+<tr>
+    <td>customTitle</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>定制invoice页面的标题</td>
+</tr>
+<tr>
+    <td>merchant.name</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户姓名。</td>
+</tr>
+<tr>
+    <td>merchant.address</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户地址第一行。</td>
+</tr>
+<tr>
+    <td>merchant.address2</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户地址第二行。</td>
+</tr>
+<tr>
+    <td>merchant.city</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户所在的城市，最长20个字节。</td>
+</tr>
+<tr>
+    <td>merchant.state</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户所在的州或省，最长20个字节。</td>
+</tr>
+<tr>
+    <td>merchant.zip</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户的邮编，最长20个字节。</td>
+</tr>
+<tr>
+    <td>merchant.country</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户所在国家，最长20个字节。</td>
+</tr>
+<tr>
+    <td>merchant.phone</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户的电话，最长20个字节。</td>
+</tr>
+<tr>
+    <td>merchant.email</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>商户的电子邮件地址。</td>
+</tr>
+<tr>
+    <td>buyer.name</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户的姓名。</td>
+</tr>
+<tr>
+    <td>buyer.address</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户地址第一行。</td>
+</tr>
+<tr>
+    <td>buyer.address2</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户地址第二行。</td>
+</tr>
+<tr>
+    <td>buyer.city</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户所在城市，最长20个字节。</td>
+</tr>
+<tr>
+    <td>buyer.state</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户所在的州或省，最长20个字节。</td>
+</tr>
+<tr>
+    <td>buyer.zip</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户的邮编，最长20个字节。</td>
+</tr>
+<tr>
+    <td>buyer.country</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户所在国家，最长20个字节。</td>
+</tr>
+<tr>
+    <td>buyer.phone</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户的电话，最长20个字节。</td>
+</tr>
+<tr>
+    <td>buyer.email</td>
+    <td>可选</td>
+    <td>字符串</td>
+    <td>用户的电子邮件地址。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>注：</p>
+<ul>
+    <li>如果您不提供invoice中的关于商户的某些信息，我们可能使用您注册时候提供的相应信息作为默认值。</li>
+    <li>上述参数中，如未注明，所有字符串长度不得超过100个字节，否者系统将返回错误代码，付款收据也无法生成。</li>
+</ul>
+<h5>返回结果</h5>
+<p>如果收据被成功生成，API将返回JSON字符串，其中包含该收据的永久地址（URL）。</p>
+            <pre>
+<code>
+    {
+    "id":"iH5riPNJaMHeuA7HsyFbsp",
+    "url":"https://pay.coinport.com/api/v1/invoice/iH5riPNJaMHeuA7HsyFbsp",
+    "status":"NEW",
+    "price":30000.0,
+    "currency":"CNY",
+    "btcPrice":"7.7907",
+    "invoiceTime":1405676287664,
+    "expirationTime":1405677187664,
+    "currentTime":1405676287664
+    }
+</code>
+</pre>
+
+
+<div class="blk20"></div>
+<a name="#display-invoice" id="display-invoice"></a>
+<h4>向用户展示收据</h4>
+<p>为了向用户收款，您需要将用户重定向到新收据的URL（上述例子中的 https://pay.coinport.com/api/v1/invoice/iH5riPNJaMHeuA7HsyFbsp）。请记得在生成收据的时候指定一个redirectURL，这样用户付款后会被重定向到该redirectURL，继续在您的网站中交互。
+
+<h5>收据色彩</h5>
+<p>我们提供超过20种收据色彩方案。您可以在收据的URL中添加一个theme参数选择其中一个颜色（默认为“default”）。比如您想选择蓝色方案：</p>
+<pre>
+<code>
+    https://pay.coinport.com/api/v1/invoice/iH5riPNJaMHeuA7HsyFbsp?theme=blue
+</code>
+</pre>
+
+<p>色彩方案的名称分别是：</p>
+<pre>
+<code>
+    "black", "white", "grey",
+    "amber", "blue", "bluegrey",
+    "brown", "cyan", "deeporange",
+    "deeppurple", "green", "indigo",
+    "lightblue", "lightgreen", "lime",
+    "orange", "pink", "purple",
+    "red", "teal", "yellow"
+</code>
+</pre>
+
+<h5>商户页面内嵌收据页面</h5>
+<p>如果商务需要将币丰支付的收据页面内嵌到自己网站中，可以通过如下访问方式获得收据的json数据。</p>
+<pre>
+<code>
+    https://pay.coinport.com/api/v1/invoice/iH5riPNJaMHeuA7HsyFbsp?f=json
+</code>
+</pre>
+
+<div class="blk20"></div>
+<a name="#get-rates" id="get-rates"></a>
+<h4>读取比特币汇率</h4>
+<p>我们提供API，供您查询比特币和人民币之间的阶梯兑换价格。</p>
+            <pre>
+<code>    GET https://pay.coinport.com/api/v1/rates/CNY</code></pre>
+<p>如果希望查询比特币与美元的汇率，即将“CNY”替换成“"USD”，具体如下。</p>
+            <pre>
+<code>    GET https://pay.coinport.com/api/v1/rates/USD</code></pre>
+<p>如果您接收比特币结算并且在网站上用比特币标价，建议您用上面API的返回结果对您的商品进行实时比特币价格计算。我们的价格每分钟更新一次。您需要自己决定不同法定货币之间的兑换率。</p>
+
+<div class="blk20"></div>
+<a name="#invoice-status" id="invoice-status"></a>
+<h4>收据状态</h4>
+<p>币丰支付的收据状态一定是下面列表中的某一个（不区分大小写）。请参考该表了解您收据的状态及其含义。</p>
+<div class="table-responsive">
+    <table  class="table table-striped table-bordered responsive no-m" data-sortable>
+        <col span="1" >
+        <col span="1" >
+        <col span="1" >
+        <col span="1" style="width:50%;"  >
+        <thead>
+        <tr>
+            <td>收据状态</td>
+            <td>说明</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td nowrap>NEW（新）</td>
+            <td>该收据刚刚被生成，并且可以接收用户的付款。如果用户支付了部份款项，该收据状态不会改变。</td>
+        </tr>
+        <tr>
+            <td nowrap>PAID（已付款）</td>
+            <td>用户已经付款给该收据，比特币网络上已经看到了相应的转账记录。</td>
+        </tr>
+        <tr>
+            <td nowrap>CONFIRMED（已确认）</td>
+            <td>用户的付款已经根据您的设置得到了确认。到达这个状态所需要要的时间一方面受比特币网络影响，另一方面也受您transactionSpeed设置的影响。transactionSpeed值越高，所需额确认时间也越长。</td>
+        </tr>
+        <tr>
+            <td nowrap>COMPLETE（已完成）</td>
+            <td>当您客户的付款达到比特币网络6次确认（相当于您将transactionSpeed设为6），该笔付款就是完成状态。币丰支付就会将本次付款的额度累加到您的总额度中。</td>
+        </tr>
+        <tr>
+            <td nowrap>EXPIRED（过期）</td>
+            <td>在生成后15分钟后，如果收据还未进入Paid状态，该收据既被标识为过期。</td>
+        </tr>
+        <tr>
+            <td nowrap>INVALID（作废）</td>
+            <td>当收据进入Paid（已付款）状态后一个小时仍未进入Confirm（已确认）状态，该收据既被作废。</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="blk20"></div>
+<a name="#invoice-query" id="invoice-query"></a>
+<h4>收据查询</h4>
+<p>用户可以根据收据的状态和产生时间进行相应的查询操作。</p>
+<p>例子：查询从2014年3月1日到2014年7月1日之前的，状态是新创建（new）和已支付（paid）的收据。</p>
+            <pre>
+<code>
+    curl https://pay.coinport.com/api/v1/invoices \
+    -u {{your-api-token}} \
+    -d status="new;paid" \
+    -d begin="2014-3-1" \
+    -d end="2014-7-1"
+</code>
+</pre>
+<p>status是可选字段，如果不输入，系统默认设置status为已支付（paid）、已完成（complete）和已确认（confirmed）三种状态的集合，即如下两种查询得到的结果是相同的：</p>
+            <pre>
+<code>
+    curl https://pay.coinport.com/api/v1/invoices \
+    -u {{your-api-token}} \
+    -d begin="2014-3-1" \
+    -d end="2014-7-1"
+
+    curl https://pay.coinport.com/api/v1/invoices \
+    -u {{your-api-token}} \
+    -d status="paid;complete;confirmed" \
+    -d begin="2014-3-1" \
+    -d end="2014-7-1"
+</code>
+</pre>
+<div class="blk20"></div>
+<a name="#notification" id="notification"></a>
+<h4>商户接收收据状态变更</h4>
+<p>当收据状态改变时，我们将给您推送收据的状态变更信息。</p>
+<p>如果您需要接受通知数据，请在生成付款收据的时候，填入notifycationUrl字段，设置方法见生成付款收据接口。</p>
+<p>例子：ID为iH5riPNJaMHeuA7HsyFbsp 的收据收到了用户付款，状态变为已支付（Paid），我们将为您推送如下消息：</p>
+            <pre>
+<code>
+    {
+    "id":"iH5riPNJaMHeuA7HsyFbsp",
+    "price":30000.0,
+    "currency":"CNY",
+    "btcPrice":7.7907,
+    "invoiceTime":1405676287664,
+    "expirationTime":1405677187664,
+    "posData":"optional data for merchant",
+    "currentTime":1405676287664,
+    "status":"PAID",
+    "orderId":"83451123"
+    }
+</code>
+</pre>
+
+<div class="blk20"></div>
+<a name="#invoice-query-byorder" id="invoice-query-byorder"></a>
+<h4>根据订单查询收据</h4>
+<p>用户可以根据订单ID来查询收据</p>
+<p>例子：查询订单ID为"magento-coinport-11010"的收据。</p>
+            <pre>
+<code>
+    curl https://pay.coinport.com/api/v1/invoiceByOrder \
+    -u {{your-api-token}} \
+    -d orderId="magento-coinport-11010" \
+</code>
+</pre>
+</pre>
+
+<div class="blk20"></div>
+<a name="#security" id="security"></a>
+<h4>关于安全</h4>
+<h5>服务器IP白名单</h5>
+<p>请您一定验证自己服务器接收到的所有消息（特别是收据状态变更通知）是从币丰支付公布的IP之一发出的。不这样做可能让您误以为用户已经支付成功，进而造成您的损失。目前我们服务器的IP列表为：</p>
+            <pre>
+<code>
+    54.92.3.180
+</code>
+</pre>
+<h5>API令牌（Token）</h5>
+<p>为了使用支付API接口，您需要生成至少一个API令牌（Token）。
+币丰支付的令牌和安全码没有过期时间，因此您可以选择永久使用同一个令牌和安全码。
+您可以生成多个令牌同时使用。您也可以随时更新令牌和安全码，这对您的账号清算不会有任何影响。
+有必要向您指出：不同的令牌在后台都会被映射到您的同一个账号ID，因此不同的令牌不会起到类似于子账号的功能。</p>
+
+<p>为了确保令牌和安全码不被泄露，和币丰支付的所有交互都应该通过HTTPS和WSS进行。
+如果您意识到自己的API令牌或安全码可能已经泄露，请第一时间登陆网站，更新该令牌和安全码。</p>
+
+<strong>签名机制</strong>
+<p>签名机制可以用来防止币丰支付与商户之间交互的数据被中间人篡改。如果您在API请求中提供了基于MD5加密的数字签名，我们将对该签名进行验证。同时，我们会对返回的数据进行签名，您也需要验证我们发送消息的签名，特别是收据状态变更通知消息。</p>
+<p>签名计算方式为：</p>
+            <pre>
+<code>
+    signature = md5(message + secret)
+</code>
+</pre>
+<p>签名的文本为消息体加每个用户的secret key。Secret Key可以在您的账户设置页面查到，与API token一样，需要妥善保管，避免泄露。
+    您也可以定期更换Secret Key，以提高安全性。
+    Secret Key一旦更新，系统将立即使用新值，旧值即刻作废。请您自行妥善处理签名校验逻辑。
+</p>
+</pre>
+<p>消息签名将在HTTP头中发送，以“Rest-Sign”为key，例如：</p>
+            <pre>
+<code>
+    Rest-Sign -> 4e9a7587fd4abc9310cb480582c05e88
+</code>
+</pre>
+
+
+<div class="blk20"></div>
+<a name="#refund" id="refund"></a>
+<h4>商家退款</h4>
+<h5>商家退款流程</h5>
+<p>提交退款申请 -> 生成退款记录 -> 查询自己的退款申请 -> 核对相关信息 -> 确认或取消该请求</p>
+<h5>退款申请</h5>
+<p>当商家需要为消费者退款时，币丰支付将使用商户的余额来购买比特币，退还给消费者。</p>
+<p>商家提交退款请求时需要提交以下数据：收据ID、退款的法币数额、消费者的btc退款地址。具体API操作如下：</p>
+<pre>
+<code>
+    curl https://pay.coinport.com/api/v1/refund \
+        -u {{your-api-token}} \
+        -d amount=30000 \
+        -d address=1MxwyRqxGhVzo2MT23HZuEYahMpVywaPdp \
+        -d invoiceId=i5Yfc1T6EXyakctNWTWwHA
+</code>
+</pre>
+<p>退款成功后，api会返回退款申请的refundId， 数据格式如下：</p>
+<pre>
+<code>
+    {
+    refundId: 1000000001
+    }
+</code>
+</pre>
+
+<h5>退款查询</h5>
+<p>如果生成的refundId为1000000001，调用如下：</p>
+<pre>
+<code>
+    GET     /api/v1/refundId/1000000001
+</code>
+</pre>
+<p>返回数据格式如下：</p>
+<pre>
+<code>
+    {
+    "id":"1000000001",
+    "date":"1414749791399",
+    "status":"Pending",
+    "refundAmount":"30000",
+    "refundCurrency":"Cny",
+    "amount":"10",
+    "currency":"Btc",
+    "address":"1MxwyRqxGhVzo2MT23HZuEYahMpVywaPdp"
+    }
+</code>
+</pre>
+
+<h5>退款确认或取消</h5>
+<p>当商家对退款内容核实无误之后，需要对该退款请求进行确认。如果退款内容有误，可以对该申请进行取消。</p>
+<p>具体操作如下：</p>
+<pre>
+<code>
+    curl https://pay.coinport.com/api/v1/refund \
+        -u {{your-api-token}} \
+        -d refundId=1000000001 \
+        -d cancel=false \  //取消为true, 确认位false
+</code>
+</pre>
+
+</div>
+</section>
+</div>
+</div>
+</div>
+
+<div class="divider"></div>
+</div>
+
+@_footer()
+
+<!--end-main-container-->
+@_tailResource()
+@_ga()
+</body>
+</html>

@@ -1,0 +1,39 @@
+@(active: Int = 1)(implicit session: Session)
+
+@session.get("id") match {
+case Some(id) => {
+<span ng-init="merchantId='@id'" ng-show="false"></span>
+}
+case None => {
+<span ng-init="merchantId=-1" ng-show="false"></span>
+}
+}
+
+<div class="content-box aside">
+    <div class="list-group list-group-lg">
+        @if(active == 1) {<a href="/account" class="list-group-item active">} else {<a href="/account" class="list-group-item ">}
+            <i class="icon-profile pull-right active"></i><span>我的账户</span>
+        </a>
+
+        @if(active == 2) {<a href="/accountprofile/@{session.get("id").getOrElse("")}" class="list-group-item active">} else {<a href="/accountprofile/@{session.get("id").getOrElse("")}" class="list-group-item">}
+            <i class="icon-profile-set pull-right"></i><span class="">我的设置</span>
+        </a>
+
+        @if(active == 3) {<a href="/ledger/CNY" class="list-group-item active">} else {<a href="/ledger/CNY" class="list-group-item ">}
+            <i class="icon-chart pull-right"></i><span class="">我的报表</span>
+        </a>
+
+        @if(active == 4) {<a href="/withdraw/CNY" class="list-group-item active">} else {<a href="/withdraw/CNY" class="list-group-item">}
+            <i class="icon-withdrawal pull-right"></i><span class="">我的提现</span>
+        </a>
+
+        @if(active == 5) {<a href="/refund" class="list-group-item active">} else {<a href="/refund" class="list-group-item">}
+            <i class="icon-bitcoin pull-right"></i><span class="">我的退款</span>
+        </a>
+
+        <!--@if(active == 6) {<a href="/changepwd" class="list-group-item active">} else {<a href="/changepwd" class="list-group-item">}-->
+            <!--<i class="icon-key pull-right"></i><span class="">密码修改</span>-->
+        <!--</a>-->
+
+    </div>
+</div>

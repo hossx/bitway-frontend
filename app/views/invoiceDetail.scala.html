@@ -1,0 +1,84 @@
+@(invoiceId: String)(implicit session: Session)
+
+<!doctype html>
+<html ng-app="invoiceDetail">
+<head>
+    @_headResource()
+</head>
+
+<body>
+@_navbar()(session)
+<span ng-init="invoiceId='@invoiceId'" ng-show="false"></span>
+<div class="fixes-top bg-white">
+    <div class="blk20"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        <h4><strong>收据详情</strong></h4>
+                    </header>
+                    <div class="panel-body" ng-controller="invoiceDetailCtrl">
+                        <form class="form-horizontal" name="refundForm" role="form">
+                            <div class="form-group">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">收据ID：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.id" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">状态：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.status | transferStatusText2" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">结算货币：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.currency" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">结算货币价格：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.price" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">BTC价格：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.btcPrice" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">创建时间：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.invoiceTime | date:'yyyy-MM-dd HH:mm:ss'" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">最后更新：</label>
+                                <div class="col-sm-4 col-xs-12">
+                                    <label type="text" class="form-control" ng-bind="invoice.updateTime | date:'yyyy-MM-dd HH:mm:ss'"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/javascripts/angular.min.js"></script>
+<script src="/javascripts/coinport/invoiceDetail.js"></script>
+<script src="/javascripts/coinport/filter.js"></script>
+
+@_footer(false)
+
+<!--end-main-container-->
+@_tailResource()
+@_ga()
+</body>
+</html>

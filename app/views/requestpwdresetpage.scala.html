@@ -1,0 +1,42 @@
+@()(implicit lang: Lang, session: Session)
+<!doctype html>
+<html ng-app="resetPwd">
+<head>
+    @_headResource()
+</head>
+
+<body>
+@_navbar()(session)
+<div class="fixes-top bg-white">
+  <div class="blk20"></div>
+  <div class="container">
+    <div class="box-sm">
+      <form name="form">
+        <div class="list-group list-group-lg" ng-controller="ResetPwdCtrl">
+          <div class="list-group-item text-center">
+            <h4><em class="icon box bg-popurle"><i class="icon-key"></i></em>忘记密码</h4>
+          </div>
+          <div class="list-group-item"> 请输入注册的邮箱地址，我们将会给你发送一封验证邮件用以重置密码。 </div>
+          <div class="list-group-item">
+
+            <input type="email" placeholder="Email" ng-model="email" class="form-control">
+            <!--<input type="email" placeholder="Email" >-->
+          </div>
+          <div class="list-group-item">
+            <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="sendEmail()">发送邮件</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@_footer(false)
+
+<!--end-main-container-->
+<script src="/javascripts/angular.min.js"></script>
+<script src="/javascripts/coinport/resetPwd.js"></script>
+<script src="/javascripts/coinport/repeatInput.js"></script>
+@_tailResource()
+@_ga()
+</body>
+</html>

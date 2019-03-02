@@ -1,0 +1,18 @@
+paywithbitcoin=Payer avec Bitcoin
+invoice.button=Ouvrir Bitcoin portefeuille
+invoice.status.success=Payé
+invoice.status.expired=Expiré
+invoice.title=PAYER
+invoice.return=Retour chez le marchand
+invoice.result.label1=Cette facture de
+invoice.result.label2=BTC a été
+invoice.result.label3=BTC a été
+invoice.value=Valeur de la facture est de
+invoice.expiringIn=Expirant en
+invoice.receivedAt=Paiement reçu à
+invoice.expiredAt=Expiré à
+
+invoice.merchant=Marchand
+invoice.buyer=Acheteur
+invoice.orderId=Ordre ID
+invoice.item=Item

@@ -1,0 +1,181 @@
+@import com.coinport.bitway.data._
+
+@(invoice: Invoice, 
+dateFormatter: Long => String, 
+priceFormatter: Double=>String, 
+iframe: Boolean = false, 
+paymentUri: String = "", 
+customLogoUrl: Option[String] = None,
+customTitle: Option[String] = None)(implicit lang: Lang)
+
+<div id="container" class=" @if(invoice.status == InvoiceStatus.New) {new}
+    @if(invoice.status == InvoiceStatus.Expired || invoice.status == InvoiceStatus.Invalid) {expired}
+    @if(invoice.status == InvoiceStatus.Paid ||
+    invoice.status == InvoiceStatus.Confirmed ||
+    invoice.status == InvoiceStatus.Complete)  {paid}">
+    <div id="content">
+        <div class="invoice fade-in">
+
+            <div id="wechat-cover" class="new-show">
+                <h1>You are using WeChat.</h1>
+                <p>WeChat does not support opening Bitcoin Wallet Apps.</p>
+                <p>Please tap the '...' button on the top-right corner of this page, then tap 'Open in Safari' to proceed. </p>
+                <p></p>
+                <p>Good Luck!
+                </p>
+            </div>
+
+            <div class="brand">
+                
+                @if(customLogoUrl.isDefined && customLogoUrl.get.nonEmpty) {
+                    <div class="logo">
+                    <img class="logo-img" src="@customLogoUrl.get" onerror="$('.logo').addClass('has-bg-img');this.style.visibility='hidden';"></img>
+                    </div>
+                } else {
+                    @if(invoice.data.customLogoUrl.isDefined && invoice.data.customLogoUrl.get.nonEmpty) {
+                    <div class="logo">
+                        <img class="logo-img" src="@invoice.data.customLogoUrl.get" onerror="$('.logo').addClass('has-bg-img');this.style.visibility='hidden';"></img>
+                        </div>
+                    } else {
+                    <div class="logo has-bg-img"></div>
+                    }
+                }
+                @if(customTitle.isDefined && customTitle.get.nonEmpty) {
+                    <p>@customTitle.get</p>
+                } else {
+                    @if(invoice.data.customTitle.isDefined && invoice.data.customTitle.get.nonEmpty) {
+                        <p>@invoice.data.customTitle.get</p>
+                    } else {
+                     <p>@Messages("logo")</p>
+                    }
+                }             
+            </div>
+
+            <div class="serrated"></div>
+
+            <div class="heading">
+                <div class="new-show">
+                    <div class="line1">
+                        <span>@Messages("invoice.title")</span>
+                        <span id="price" class="amount">@priceFormatter(invoice.btcPrice - invoice.btcPaid.getOrElse(0.0))</span>
+                        <span>BTC</span>
+                    </div>
+                </div>
+                <div class="paid-show">
+                    <div class="line1">
+                        <span>@Messages("invoice.result.label1")</span>
+                        <span class="amount">@priceFormatter(invoice.btcPrice)</span>
+                        <span>@Messages("invoice.result.label3") </span>
+                    </div>
+                    <div class="tag">
+                        <span class="status-label">@Messages("invoice.status.success")</span>
+                        <span class="status-tail">@Messages("invoice.status.success2")</span>
+                    </div>
+                </div>
+                <div class="expired-show">
+                    <div class="line1">
+                        <span>@Messages("invoice.result.label1")</span>
+                        <span class="amount">@priceFormatter(invoice.btcPrice - invoice.btcPaid.getOrElse(0.0))</span>
+                        <span>@Messages("invoice.result.label2")</span>
+                        <div class="tag">
+                            <span class="status-label">@Messages("invoice.status.expired")</span>
+                            <span class="status-tail">@Messages("invoice.status.expired2")</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="line2">
+                    <span>
+                        @Messages("invoice.value"): @priceFormatter(invoice.data.price)
+                        @if(lang.code == "zh-CN" && invoice.data.currency.toString().toUpperCase() == "CNY") {
+                        元
+                        } else {
+                        @invoice.data.currency.toString().toUpperCase()
+                        }
+                    </span>
+                </div>
+
+                <div class="details">
+                    <div class="divider"></div>
+                    @if(invoice.data.currency != Currency.Btc) {
+                    <div class="keyvalue">
+                        <span class="v">1 BTC = @invoice.rate @invoice.data.currency.toString().toUpperCase()</span>
+                    </div>
+                    }
+                    @if(invoice.merchantName != null && invoice.merchantName.size > 0) {
+                    <div class="keyvalue">
+                        <span class="k">@Messages("invoice.merchant"):</span><span class="v">@invoice.merchantName</span>
+                    </div>
+                    }
+                    @if(invoice.data.buyer.isDefined) {
+                    <div class="keyvalue">
+                        <span class="k">@Messages("invoice.buyer"):</span><span class="v">@invoice.data.buyer.get.name</span>
+                    </div>
+                    }
+                    @if(invoice.data.orderId.isDefined) {
+                    <div class="keyvalue">
+                        <span class="k">@Messages("invoice.orderId"):</span><span class="v">@invoice.data.orderId</span>
+                    </div>
+                    }
+                    @if(invoice.data.itemDesc.isDefined) {
+                    <div class="keyvalue">
+                        <span class="k">@Messages("invoice.item"):</span><span class="v">@invoice.data.itemDesc</span>
+                    </div>
+                    }
+                </div>
+            </div> <!-- end:heading -->
+
+            @if(invoice.status == InvoiceStatus.New) {
+                <div class="scan new-show">
+                    <div class="qrcode">
+                        <div id="qrcode"></div>
+                    </div>
+                </div> <!-- end:scan -->
+
+                <div id="addressSection" class="address new-show">
+                    <div class="addr">@invoice.paymentAddress</div>
+                </div> <!-- end:address -->
+            }
+
+            <div class="action new-show">
+                <a id="payBtn" href="bitcoin:@invoice.paymentAddress?amount=@priceFormatter(invoice.btcPrice - invoice.btcPaid.getOrElse(0.0))&label=Coinport%20invoice:%20@invoice.id&r=@paymentUri">@Messages("invoice.button")</a>
+            </div> <!-- end:action -->
+            <div class="action paid-show @if(!invoice.data.redirectURL.isDefined){disabled}">
+                @if(invoice.data.redirectMethod.isDefined && invoice.data.redirectMethod.get.toUpperCase == "POST"){
+                <a href="/redirect/@invoice.id">@Messages("invoice.return")</a>
+                } else {
+                <a href="@invoice.data.redirectURL.getOrElse("")">@Messages("invoice.return")</a>
+                }
+            </div> <!-- end:action -->
+            <div class="action expired-show @if(!invoice.data.redirectURL.isDefined){disabled}">
+                @if(invoice.data.redirectMethod.isDefined && invoice.data.redirectMethod.get.toUpperCase == "POST"){
+                <a href="/redirect/@invoice.id">@Messages("invoice.return")</a>
+                } else {
+                <a href="@invoice.data.redirectURL.getOrElse("")">@Messages("invoice.return")</a>
+                }
+            </div> <!-- end:action -->
+
+            <div id="i1" class="indicator">
+                <p class="expire new-show">@Messages("invoice.expiringIn") <span class="deadlineTime"></span></p>
+                <p class="expire paid-show">@Messages("invoice.receivedAt") <span class="paidTime"></span></p>
+                <p class="expire expired-show">@Messages("invoice.expiredAt") <span class="expiredTime"></span></p>
+                <div class="indi-back"><div class="indi-cover"></div></div>
+            </div> <!-- end:indicator -->
+
+        </div> <!-- end:invoice -->
+    </div> <!-- end:content -->
+
+
+    <div id="footer">
+        <div class="copyright">
+            <span><a href="/">CoinportPay</a></span>
+            <span>© 2014 Coinport Technology Limited, HK. All Rights Reserved.</span>
+            <!--span><a target="_blank" href="https://exchange.coinport.com">Buy Bitcoin</a></span-->
+        </div>
+        <div id="i2" class="indicator">
+            <p class="expire new-show">@Messages("invoice.expiringIn") <span class="deadlineTime"></span></p>
+            <p class="expire paid-show">@Messages("invoice.receivedAt") <span class="paidTime"></span></p>
+            <p class="expire expired-show">@Messages("invoice.expiredAt") <span class="expiredTime"></span></p>
+            <div class="indi-back"><div class="indi-cover"></div></div>
+        </div>
+    </div> <!-- end:footer -->
+</div>
